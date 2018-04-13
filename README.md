@@ -1,4 +1,4 @@
-Hello from Branch-A!
+Hello from both branches!
 
 # IVT Spaceship
 
