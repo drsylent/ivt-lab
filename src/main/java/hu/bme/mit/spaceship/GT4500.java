@@ -94,7 +94,7 @@ public class GT4500 implements SpaceShip {
    if(firingMode == FiringMode.ALL){
         // try to fire both of the torpedo stores
        firingSuccess = fireBothTorpedoStores();
-    }
+   }
 
     return firingSuccess;
   }
