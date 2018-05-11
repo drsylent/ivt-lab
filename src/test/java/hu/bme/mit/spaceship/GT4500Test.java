@@ -174,5 +174,26 @@ public class GT4500Test {
     verify(mockTSSecondary, times(1)).fire(1);
     assertEquals(true, result);
   }
+  
+  /**
+   * Fixing Branch Coverage
+   * Test #7: firing from both stores - secondary fails
+   */
+  @Test
+  public void fireTorpedo_All_Secondary_Fails(){
+    // Arrange
+	when(mockTSPrimary.fire(1)).thenReturn(true);
+	when(mockTSSecondary.fire(1)).thenReturn(false);
+	when(mockTSPrimary.isEmpty()).thenReturn(false);
+	when(mockTSSecondary.isEmpty()).thenReturn(false);
+
+    // Act
+    boolean result = ship.fireTorpedo(FiringMode.ALL);
+
+    // Assert
+    verify(mockTSPrimary, times(1)).fire(1);
+    verify(mockTSSecondary, times(1)).fire(1);
+    assertEquals(true, result);
+  }
 
 }
