@@ -49,13 +49,15 @@ public class GT4500Test {
   }
   
   /**
-   * Test #1: firing a single torpedo, but fails
+   * Test #1: firing a single torpedo, but both fails
    */
   @Test
   public void fireTorpedo_Single_Failure(){
     // Arrange
 	when(mockTSPrimary.fire(1)).thenReturn(false);
 	when(mockTSSecondary.fire(1)).thenReturn(false);
+	when(mockTSPrimary.isEmpty()).thenReturn(false);
+	when(mockTSSecondary.isEmpty()).thenReturn(false);
 
     // Act
     boolean result = ship.fireTorpedo(FiringMode.SINGLE);
@@ -74,6 +76,8 @@ public class GT4500Test {
     // Arrange
 	when(mockTSPrimary.fire(1)).thenReturn(true);
 	when(mockTSSecondary.fire(1)).thenReturn(true);
+	when(mockTSPrimary.isEmpty()).thenReturn(false);
+	when(mockTSSecondary.isEmpty()).thenReturn(false);
 
     // Act
     boolean result1 = ship.fireTorpedo(FiringMode.SINGLE);
@@ -90,10 +94,12 @@ public class GT4500Test {
    * Test #3: firing 2 torpedoes - but the secondary is empty
    */
   @Test
-  public void fireTorpedo_Single_Twice_Same_Store(){
+  public void fireTorpedo_Single_Secondary_Empty(){
     // Arrange
 	when(mockTSPrimary.fire(1)).thenReturn(true);
 	when(mockTSSecondary.fire(1)).thenReturn(false);
+	when(mockTSPrimary.isEmpty()).thenReturn(false);
+	when(mockTSSecondary.isEmpty()).thenReturn(true);
 
     // Act
     boolean result1 = ship.fireTorpedo(FiringMode.SINGLE);
@@ -101,7 +107,7 @@ public class GT4500Test {
 
     // Assert
     verify(mockTSPrimary, times(2)).fire(1);
-    verify(mockTSSecondary, times(1)).fire(1);
+    verify(mockTSSecondary, times(0)).fire(1);
     assertEquals(true, result1);
     assertEquals(true, result2);
   }
@@ -110,10 +116,12 @@ public class GT4500Test {
    * Test #4: firing from both stores - only the secondary succeeds
    */
   @Test
-  public void fireTorpedo_All_One_Empty(){
+  public void fireTorpedo_All_Primary_Fails(){
     // Arrange
 	when(mockTSPrimary.fire(1)).thenReturn(false);
 	when(mockTSSecondary.fire(1)).thenReturn(true);
+	when(mockTSPrimary.isEmpty()).thenReturn(false);
+	when(mockTSSecondary.isEmpty()).thenReturn(false);
 
     // Act
     boolean result = ship.fireTorpedo(FiringMode.ALL);
@@ -128,17 +136,19 @@ public class GT4500Test {
    * Test #5: firing from both stores - both are empty
    */
   @Test
-  public void fireTorpedo_All_Failure(){
+  public void fireTorpedo_All_Empty(){
     // Arrange
 	when(mockTSPrimary.fire(1)).thenReturn(false);
 	when(mockTSSecondary.fire(1)).thenReturn(false);
+	when(mockTSPrimary.isEmpty()).thenReturn(true);
+	when(mockTSSecondary.isEmpty()).thenReturn(true);
 
     // Act
     boolean result = ship.fireTorpedo(FiringMode.ALL);
 
     // Assert
-    verify(mockTSPrimary, times(1)).fire(1);
-    verify(mockTSSecondary, times(1)).fire(1);
+    verify(mockTSPrimary, times(0)).fire(1);
+    verify(mockTSSecondary, times(0)).fire(1);
     assertEquals(false, result);
   }
   
@@ -153,12 +163,14 @@ public class GT4500Test {
     // Arrange
 	when(mockTSPrimary.fire(1)).thenReturn(false);
 	when(mockTSSecondary.fire(1)).thenReturn(true);
+	when(mockTSPrimary.isEmpty()).thenReturn(true);
+	when(mockTSSecondary.isEmpty()).thenReturn(false);
 
     // Act
     boolean result = ship.fireTorpedo(FiringMode.SINGLE);
 
     // Assert
-    verify(mockTSPrimary, times(1)).fire(1);
+    verify(mockTSPrimary, times(0)).fire(1);
     verify(mockTSSecondary, times(1)).fire(1);
     assertEquals(true, result);
   }
