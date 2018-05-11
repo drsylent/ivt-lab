@@ -29,7 +29,7 @@ public class GT4500Test {
 
     // Assert
     verify(mockTSPrimary, times(1)).fire(1);
-    verify(mockTSSecondary, times(0)).fire(1);
+    verifyZeroInteractions(mockTSSecondary);
     assertEquals(true, result);
   }
 
@@ -41,6 +41,121 @@ public class GT4500Test {
 
     // Act
     boolean result = ship.fireTorpedo(FiringMode.ALL);
+
+    // Assert
+    verify(mockTSPrimary, times(1)).fire(1);
+    verify(mockTSSecondary, times(1)).fire(1);
+    assertEquals(true, result);
+  }
+  
+  /**
+   * Test #1: firing a single torpedo, but fails
+   */
+  @Test
+  public void fireTorpedo_Single_Failure(){
+    // Arrange
+	when(mockTSPrimary.fire(1)).thenReturn(false);
+	when(mockTSSecondary.fire(1)).thenReturn(false);
+
+    // Act
+    boolean result = ship.fireTorpedo(FiringMode.SINGLE);
+
+    // Assert
+    verify(mockTSPrimary, times(1)).fire(1);
+    verify(mockTSSecondary, times(1)).fire(1);
+    assertEquals(false, result);
+  }
+  
+  /**
+   * Test #2: firing 2 torpedoes - both stores will fire
+   */
+  @Test
+  public void fireTorpedo_Single_Alternates(){
+    // Arrange
+	when(mockTSPrimary.fire(1)).thenReturn(true);
+	when(mockTSSecondary.fire(1)).thenReturn(true);
+
+    // Act
+    boolean result1 = ship.fireTorpedo(FiringMode.SINGLE);
+    boolean result2 = ship.fireTorpedo(FiringMode.SINGLE);
+
+    // Assert
+    verify(mockTSPrimary, times(1)).fire(1);
+    verify(mockTSSecondary, times(1)).fire(1);
+    assertEquals(true, result1);
+    assertEquals(true, result2);
+  }
+  
+  /**
+   * Test #3: firing 2 torpedoes - but the secondary is empty
+   */
+  @Test
+  public void fireTorpedo_Single_Twice_Same_Store(){
+    // Arrange
+	when(mockTSPrimary.fire(1)).thenReturn(true);
+	when(mockTSSecondary.fire(1)).thenReturn(false);
+
+    // Act
+    boolean result1 = ship.fireTorpedo(FiringMode.SINGLE);
+    boolean result2 = ship.fireTorpedo(FiringMode.SINGLE);
+
+    // Assert
+    verify(mockTSPrimary, times(2)).fire(1);
+    verify(mockTSSecondary, times(1)).fire(1);
+    assertEquals(true, result1);
+    assertEquals(true, result2);
+  }
+  
+  /**
+   * Test #4: firing from both stores - only the secondary succeeds
+   */
+  @Test
+  public void fireTorpedo_All_One_Empty(){
+    // Arrange
+	when(mockTSPrimary.fire(1)).thenReturn(false);
+	when(mockTSSecondary.fire(1)).thenReturn(true);
+
+    // Act
+    boolean result = ship.fireTorpedo(FiringMode.ALL);
+
+    // Assert
+    verify(mockTSPrimary, times(1)).fire(1);
+    verify(mockTSSecondary, times(1)).fire(1);
+    assertEquals(true, result);
+  }
+  
+  /**
+   * Test #5: firing from both stores - both are empty
+   */
+  @Test
+  public void fireTorpedo_All_Failure(){
+    // Arrange
+	when(mockTSPrimary.fire(1)).thenReturn(false);
+	when(mockTSSecondary.fire(1)).thenReturn(false);
+
+    // Act
+    boolean result = ship.fireTorpedo(FiringMode.ALL);
+
+    // Assert
+    verify(mockTSPrimary, times(1)).fire(1);
+    verify(mockTSSecondary, times(1)).fire(1);
+    assertEquals(false, result);
+  }
+  
+  /**
+   * From source code
+   * It's hard to follow, what the test actually analyses
+   * Test #6: try to fire primary, but it is empty,
+   * 			so fire secondary
+   */
+  @Test
+  public void fireTorpedo_Single_Primary_Empty(){
+    // Arrange
+	when(mockTSPrimary.fire(1)).thenReturn(false);
+	when(mockTSSecondary.fire(1)).thenReturn(true);
+
+    // Act
+    boolean result = ship.fireTorpedo(FiringMode.SINGLE);
 
     // Assert
     verify(mockTSPrimary, times(1)).fire(1);
